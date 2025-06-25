@@ -62,6 +62,36 @@ def extract_todos(text):
     matches = todo_pattern4.findall(text)
     todos.extend([match.strip() for match in matches])
     
+    # Pattern 5: Lines with deadline patterns (期限、締切、〆切、due date, etc.)
+    deadline_pattern = re.compile(r'(?:期限|締切|〆切|しめきり|デッドライン|due date|deadline)(?::|：|\s*は|\s*=|\s+)?\s*(.+?)(?:\n|$)', re.IGNORECASE)
+    matches = deadline_pattern.findall(text)
+    todos.extend([f"期限: {match.strip()}" for match in matches])
+    
+    # Pattern 6: Lines with date patterns that look like tasks (MM/DD or YYYY/MM/DD followed by task description)
+    date_task_pattern = re.compile(r'(?:^|\n)\s*(?:\d{4}[/-])?\d{1,2}[/-]\d{1,2}(?:\s*[(（]?(?:月|火|水|木|金|土|日|Mon|Tue|Wed|Thu|Fri|Sat|Sun)[)）]?)?\s*[:：]?\s*(.+?)(?:\n|$)')
+    matches = date_task_pattern.findall(text)
+    todos.extend([match.strip() for match in matches])
+    
+    # Pattern 7: Lines with "まで" followed by a task description
+    made_pattern = re.compile(r'(\d{1,2}月\d{1,2}日|(?:\d{4}[/-])?\d{1,2}[/-]\d{1,2})(?:\s*[(（]?(?:月|火|水|木|金|土|日|Mon|Tue|Wed|Thu|Fri|Sat|Sun)[)）]?)?\s*まで(?:に|は|で)?\s*(.+?)(?:\n|$)')
+    matches = made_pattern.findall(text)
+    todos.extend([f"{date}まで: {task.strip()}" for date, task in matches])
+    
+    # Pattern 8: Lines with action verbs followed by object (common in Japanese task descriptions)
+    action_pattern = re.compile(r'(?:^|\n|\s)(?:する|作成する|準備する|確認する|レビューする|送付する|提出する|連絡する|報告する)(?:こと)?(?::|：)?\s*(.+?)(?:\n|$)')
+    matches = action_pattern.findall(text)
+    todos.extend([match.strip() for match in matches])
+    
+    # Pattern 9: Lines with "必要" or "必須" (indicating required actions)
+    required_pattern = re.compile(r'(?:^|\n|\s)(.+?)\s*(?:が|は)\s*(?:必要|必須)(?:\n|$)')
+    matches = required_pattern.findall(text)
+    todos.extend([match.strip() for match in matches])
+    
+    # Pattern 10: Lines with "予定" followed by a task description
+    schedule_pattern = re.compile(r'(?:予定|スケジュール)(?::|：|\s+)\s*(.+?)(?:\n|$)')
+    matches = schedule_pattern.findall(text)
+    todos.extend([match.strip() for match in matches])
+    
     # Remove duplicates while preserving order
     unique_todos = []
     for todo in todos:
