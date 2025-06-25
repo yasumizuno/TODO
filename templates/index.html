@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ToDo抽出アプリ</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>ToDo抽出アプリ</h1>
+        <p>文書をアップロードして、ToDo項目を自動的に抽出します。</p>
+        
+        <div class="upload-container">
+            <form id="upload-form" enctype="multipart/form-data">
+                <div class="file-input-container">
+                    <input type="file" id="file-input" name="file" accept=".txt,.pdf,.docx,.doc">
+                    <label for="file-input" class="file-input-label">ファイルを選択</label>
+                    <span id="file-name">ファイルが選択されていません</span>
+                </div>
+                <button type="submit" id="upload-button">アップロード＆抽出</button>
+            </form>
+        </div>
+        
+        <div id="loading" class="hidden">
+            <div class="spinner"></div>
+            <p>処理中...</p>
+        </div>
+        
+        <div id="results" class="hidden">
+            <h2>抽出されたToDo項目</h2>
+            <div class="todo-controls">
+                <button id="copy-all">すべてコピー</button>
+                <button id="download-csv">CSVダウンロード</button>
+            </div>
+            <ul id="todo-list"></ul>
+            <p id="no-todos" class="hidden">ToDo項目が見つかりませんでした。</p>
+        </div>
+        
+        <div id="error-message" class="hidden">
+            <p>エラーが発生しました: <span id="error-text"></span></p>
+        </div>
+    </div>
+    
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
